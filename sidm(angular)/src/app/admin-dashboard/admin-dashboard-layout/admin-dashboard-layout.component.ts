@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import {Location} from '@angular/common';
+import { formatDate, Location } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { LocalStorageService } from 'src/app/shared/services/local-storage.service';
@@ -70,6 +70,12 @@ export class AdminDashboardLayoutComponent implements OnInit {
         else {
           item.typeOfApplicant = 'SME/SSI/START-UP'
         }
+        const format = ' dd MMM, y, HH:mm,';
+        const locale = 'en-US';
+        item.createAt = formatDate(item.createAt, format, locale)
+        // console.log(data.createAt.type);
+
+        // data.createAt = formatDate(data.createAt, 'yyyy-MM-dd', 'en-US')
         item.panNumberOfOrganization = item.panNumberOfOrganization;
 
       })
@@ -91,17 +97,11 @@ export class AdminDashboardLayoutComponent implements OnInit {
     this.routes.navigateByUrl(url);
 
   }
-  perviousPage() {
-    this.page = this.page - 1;
-    this.getdata('pervious')
-  }
-  nextpage() {
-    this.page = this.page + 1;
-    this.getdata('next')
-  }
-  approve(id:string){
+
+
+  approve() {
     let createAt = new Date();
-    this.httpService.changeStatus(id,{status:'Approved',createAt:createAt}).subscribe(data=>{
+    this.httpService.changeStatus(this.id, { status: 'Approved', createAt: createAt }).subscribe(data => {
       window.location.reload()    
       this.toast.success('successfully status change');
     },err=>{
